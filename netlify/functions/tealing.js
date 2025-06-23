@@ -15,7 +15,7 @@ exports.handler = async (event) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4',
         messages: [
           { role: 'system', content: '你是詩性的茶靈，解碼茶者心靈。' },
           { role: 'user', content: prompt },
