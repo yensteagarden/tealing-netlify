@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>茶靈語解碼 · 森林版</title>
+<style>
+  body {
+    font-family: "Noto Sans TC", sans-serif;
+    background: #f0f6f3;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1rem 2rem;
+    color: #2e4a23;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: 600;
+  }
+  input, select, button {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    border: 1.5px solid #7ea05b;
+    font-size: 1.1rem;
+    margin-top: 0.3rem;
+    box-sizing: border-box;
+  }
+  button {
+    margin-top: 1.5rem;
+    background: #6a994e;
+    border: none;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  button:hover {
+    background: #558b2f;
+  }
+  #result {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: 10px;
+    background: #d7e7cd;
+    min-height: 4rem;
+    font-size: 1.25rem;
+    font-style: italic;
+    white-space: pre-wrap;
+  }
+</style>
+</head>
+<body>
+
+<h1>茶靈語解碼 · 森林版</h1>
+
+<label for="tea">茶名</label>
+<input type="text" id="tea" placeholder="請輸入茶名，例如：東方美人" />
+
+<label for="weather">天氣</label>
+<select id="weather">
+  <option value="晴天">晴天</option>
+  <option value="雨天">雨天</option>
+  <option value="陰天">陰天</option>
+  <option value="霧氣">霧氣</option>
+  <option value="微風">微風</option>
+  <option value="炎熱">炎熱</option>
+  <option value="寒冷">寒冷</option>
+</select>
+
+<label for="feeling">當下感受</label>
+<input type="text" id="feeling" placeholder="請輸入你現在的心情，例如：平靜、期待、思念" />
+
+<button id="submitBtn">聽茶靈語</button>
+
+<div id="result">茶靈的話語會出現在這裡。</div>
+
+<script>
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const tea = document.getElementById('tea').value.trim();
+    const weather = document.getElementById('weather').value;
+    const feeling = document.getElementById('feeling').value.trim();
+    const result = document.getElementById('result');
+
+    if (!tea) {
+      alert('請輸入茶名');
+      return;
+    }
+    if (!feeling) {
+      alert('請輸入當下感受');
+      return;
+    }
+
+    result.textContent = '茶靈正在傾聽…';
+
+    try {
+      const response = await fetch('/.netlify/functions/tealing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tea, weather, feeling }),
+      });
+
+      if (!response.ok) {
+        result.textContent = '茶靈失語，請稍後再試。';
+        return;
+      }
+
+      const text = await response.text();
+      result.textContent = `茶靈語：「${text}」`;
+    } catch (error) {
+      result.textContent = '連線錯誤，請稍後再試。';
+    }
+  });
+</script>
+
+</body>
+</html>
